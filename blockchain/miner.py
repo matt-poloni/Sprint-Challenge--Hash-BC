@@ -27,7 +27,7 @@ def proof_of_work(last_proof):
     encoded = str(last_proof).encode()
     last_hash = hashlib.sha256(encoded).hexdigest()
     base = 0
-    prove = lambda b: random.randrange(b, b + 256)
+    prove = lambda b: random.randrange(b, b + (16**6))
     while valid_proof(last_hash, (proof := prove(base))) is False:
       base += 1
 

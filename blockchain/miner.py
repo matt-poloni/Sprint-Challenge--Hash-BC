@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from timeit import default_timer as timer
 
-import random
+import random # Thanks for the hint
 
 
 def proof_of_work(last_proof):
@@ -23,8 +23,16 @@ def proof_of_work(last_proof):
     start = timer()
 
     print("Searching for next proof")
-    proof = 0
     #  TODO: Your code here
+    encoded = str(last_proof).encode()
+    last_hash = hashlib.sha256(encoded).hexdigest()
+    base = 0
+    prove = lambda b: random.randrange(b, b + (16**6))
+    while valid_proof(last_hash, (proof := prove(base))) is False:
+      if timer() - start > 3:
+          print("Taking more than 3 seconds, trying again")
+          return None
+      base += 1
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
@@ -40,7 +48,9 @@ def valid_proof(last_hash, proof):
     """
 
     # TODO: Your code here!
-    pass
+    guess = str(proof).encode()
+    guess_hash = hashlib.sha256(guess).hexdigest()
+    return last_hash[-6:] == guess_hash[:6]
 
 
 if __name__ == '__main__':
@@ -50,7 +60,6 @@ if __name__ == '__main__':
     else:
         node = "https://lambda-coin.herokuapp.com/api"
 
-    coins_mined = 0
 
     # Load or create ID
     f = open("my_id.txt", "r")
@@ -58,15 +67,28 @@ if __name__ == '__main__':
     print("ID is", id)
     f.close()
 
+    def mined():
+      r = requests.get(url=node + "/totals")
+      d = r.json()
+      return d['totals'][id]
+
     if id == 'NONAME\n':
         print("ERROR: You must change your name in `my_id.txt`!")
         exit()
     # Run forever until interrupted
-    while True:
+    while (coins_mined := mined()) < 100:
         # Get the last proof from the server
         r = requests.get(url=node + "/last_proof")
-        data = r.json()
+        try:
+            data = r.json()
+        except ValueError:
+            print("Error:  Non-json response")
+            print("Response returned:")
+            print(r)
+            break
         new_proof = proof_of_work(data.get('proof'))
+        if new_proof is None:
+            continue
 
         post_data = {"proof": new_proof,
                      "id": id}

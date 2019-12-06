@@ -40,7 +40,9 @@ def valid_proof(last_hash, proof):
     """
 
     # TODO: Your code here!
-    pass
+    guess = str(proof).encode()
+    guess_hash = hashlib.sha256(guess).hexdigest()
+    return last_hash[-6:] == guess_hash[:6]
 
 
 if __name__ == '__main__':
@@ -63,7 +65,7 @@ if __name__ == '__main__':
         print("ERROR: You must change your name in `my_id.txt`!")
         exit()
     # Run forever until interrupted
-    while True:
+    while coins_mined == 0:
         # Get the last proof from the server
         r = requests.get(url=node + "/last_proof")
         data = r.json()

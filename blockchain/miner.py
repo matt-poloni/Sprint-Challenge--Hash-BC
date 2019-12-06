@@ -7,7 +7,7 @@ from uuid import uuid4
 
 from timeit import default_timer as timer
 
-import random
+import random # Thanks for the hint
 
 
 def proof_of_work(last_proof):
@@ -48,7 +48,8 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         node = sys.argv[1]
     else:
-        node = "https://lambda-coin.herokuapp.com/api"
+        # node = "https://lambda-coin.herokuapp.com/api"
+        node = "https://lambda-coin-test-1.herokuapp.com/api" # Test server
 
     coins_mined = 0
 

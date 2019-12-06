@@ -27,7 +27,7 @@ def get_indices_of_item_weights(weights, length, limit):
         if i2 is not None:
             # Order indicies from smallest to largest and return
             return (i1, i2) if i1 > i2 else (i2, i1)
-
+    # If you're here, then no matching pair was found
     return None
 
 

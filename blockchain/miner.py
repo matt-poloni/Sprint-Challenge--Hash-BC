@@ -50,8 +50,6 @@ if __name__ == '__main__':
     else:
         node = "https://lambda-coin.herokuapp.com/api"
 
-    coins_mined = 0
-
     # Load or create ID
     f = open("my_id.txt", "r")
     id = f.read()
@@ -61,8 +59,17 @@ if __name__ == '__main__':
     if id == 'NONAME\n':
         print("ERROR: You must change your name in `my_id.txt`!")
         exit()
-    # Run forever until interrupted
-    while True:
+
+    # Grab the user's latest total from server
+    def mined():
+        r = requests.get(url=node + "/totals")
+        d = r.json()
+        return d['totals'][id]
+
+    coins_mined = mined()
+
+    # Run until you have 100 coins
+    while coins_mined < 100:
         # Get the last proof from the server
         r = requests.get(url=node + "/last_proof")
         data = r.json()
@@ -73,8 +80,9 @@ if __name__ == '__main__':
 
         r = requests.post(url=node + "/mine", json=post_data)
         data = r.json()
+        coins_mined = mined()
         if data.get('message') == 'New Block Forged':
-            coins_mined += 1
             print("Total coins mined: " + str(coins_mined))
         else:
             print(data.get('message'))
+

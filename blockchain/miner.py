@@ -29,8 +29,8 @@ def proof_of_work(last_proof):
     base = 0
     prove = lambda b: random.randrange(b, b + (16**6))
     while valid_proof(last_hash, (proof := prove(base))) is False:
-      if timer() - start > 10:
-          print("Taking more than 10 seconds, trying again")
+      if timer() - start > 5:
+          print("Taking more than 5 seconds, trying again")
           return None
       base += 1
 
@@ -71,7 +71,7 @@ if __name__ == '__main__':
       r = requests.get(url=node + "/totals")
       d = r.json()
       return d['totals'][id]
-      
+
     if id == 'NONAME\n':
         print("ERROR: You must change your name in `my_id.txt`!")
         exit()

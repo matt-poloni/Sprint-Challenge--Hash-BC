@@ -29,6 +29,9 @@ def proof_of_work(last_proof):
     base = 0
     prove = lambda b: random.randrange(b, b + (16**6))
     while valid_proof(last_hash, (proof := prove(base))) is False:
+      if timer() - start > 10:
+          print("Taking more than 10 seconds, trying again")
+          return None
       base += 1
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
@@ -69,7 +72,7 @@ if __name__ == '__main__':
         print("ERROR: You must change your name in `my_id.txt`!")
         exit()
     # Run forever until interrupted
-    while coins_mined == 0:
+    while coins_mined < 100:
         # Get the last proof from the server
         r = requests.get(url=node + "/last_proof")
         try:
@@ -80,6 +83,8 @@ if __name__ == '__main__':
             print(r)
             break
         new_proof = proof_of_work(data.get('proof'))
+        if new_proof is None:
+            continue
 
         post_data = {"proof": new_proof,
                      "id": id}

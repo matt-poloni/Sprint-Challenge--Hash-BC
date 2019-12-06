@@ -60,7 +60,6 @@ if __name__ == '__main__':
     else:
         node = "https://lambda-coin.herokuapp.com/api"
 
-    coins_mined = 0
 
     # Load or create ID
     f = open("my_id.txt", "r")
@@ -68,11 +67,16 @@ if __name__ == '__main__':
     print("ID is", id)
     f.close()
 
+    def mined():
+      r = requests.get(url=node + "/totals")
+      d = r.json()
+      return d['totals'][id]
+      
     if id == 'NONAME\n':
         print("ERROR: You must change your name in `my_id.txt`!")
         exit()
     # Run forever until interrupted
-    while coins_mined < 100:
+    while (coins_mined := mined()) < 100:
         # Get the last proof from the server
         r = requests.get(url=node + "/last_proof")
         try:

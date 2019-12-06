@@ -23,8 +23,13 @@ def proof_of_work(last_proof):
     start = timer()
 
     print("Searching for next proof")
-    proof = 0
     #  TODO: Your code here
+    encoded = str(last_proof).encode()
+    last_hash = hashlib.sha256(encoded).hexdigest()
+    base = 0
+    prove = lambda b: random.randrange(b, b + 256)
+    while valid_proof(last_hash, (proof := prove(base))) is False:
+      base += 1
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
@@ -50,8 +55,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1:
         node = sys.argv[1]
     else:
-        # node = "https://lambda-coin.herokuapp.com/api"
-        node = "https://lambda-coin-test-1.herokuapp.com/api" # Test server
+        node = "https://lambda-coin.herokuapp.com/api"
 
     coins_mined = 0
 
@@ -68,7 +72,13 @@ if __name__ == '__main__':
     while coins_mined == 0:
         # Get the last proof from the server
         r = requests.get(url=node + "/last_proof")
-        data = r.json()
+        try:
+            data = r.json()
+        except ValueError:
+            print("Error:  Non-json response")
+            print("Response returned:")
+            print(r)
+            break
         new_proof = proof_of_work(data.get('proof'))
 
         post_data = {"proof": new_proof,

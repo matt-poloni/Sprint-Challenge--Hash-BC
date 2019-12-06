@@ -26,11 +26,19 @@ During your challenge, you will be pulled aside by a PM for a 5 minute interview
 
 Explain in detail the workings of a dynamic array:
 * What is the runtime complexity to access an array, add or remove from the front, and add or remove from the back?
+    * Access: **O(1)** because they are accessed by their location in memory (stored in a contiguous block)
+    * Front: O(n) because other elements need to be moved
+    * Back: **O(1)** if capacity doesn't need to change, because you just add to/remove from the end; **O(n)** if you need to increase/decrease capacity, because everything needs to get moved to a new array. (Non-dynamic arrays are always **O(n)** since the size needs to be changed with every addition/subtraction)
+
 * What is the worse case scenario if you try to extend the storage size of a dynamic array?
+    * **O(n)** to copy all the existing items over to the new storage space
 
 Explain how blockchain networks remain in consensus:
 * What does a node do if it gets a message from another in the network with a new block?
+    * Validate the new block by double-checking the new proof and keeping its own copy of the longest valid chain
+
 * Why can't someone cheat by changing a transaction from an earlier block to give themselves coins?
+    * They would need to change all intermediate blocks in addition to the target block before anyone else forged the next block in the chain
 
 ## Project Set Up
 

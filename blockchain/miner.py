@@ -61,12 +61,12 @@ if __name__ == '__main__':
         exit()
 
     # Grab the user's latest total from server
-    def mined():
+    def user_total():
         r = requests.get(url=node + "/totals")
         d = r.json()
         return d['totals'][id]
 
-    coins_mined = mined()
+    coins_mined = user_total()
 
     # Run until you have 100 coins
     while coins_mined < 100:
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
         r = requests.post(url=node + "/mine", json=post_data)
         data = r.json()
-        coins_mined = mined()
+        coins_mined = user_total()
         if data.get('message') == 'New Block Forged':
             print("Total coins mined: " + str(coins_mined))
         else:
